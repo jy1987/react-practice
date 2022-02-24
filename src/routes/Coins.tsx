@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -17,6 +18,11 @@ const Header = styled.header`
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: 48px;
+`;
+
+const Loader = styled.span`
+  text-align: center;
+  display: block;
 `;
 
 const CoinList = styled.ul``;
@@ -39,44 +45,43 @@ const Coin = styled.li`
 `;
 //upbit secret key :zE1TaNTvxCXbLn8SYPWxOUglLpilLTT5ecjN4zke
 // upbit access key : zeF6AEJOnPszEuiFY7JrA6m1gbpAuMYfcRRxxFyl
-const coins = [
-  {
-    market: "KRW-BTC",
-    korean_name: "비트코인",
-    english_name: "Bitcoin",
-  },
-  {
-    market: "KRW-ETH",
-    korean_name: "이더리움",
-    english_name: "Ethereum",
-  },
-  {
-    market: "BTC-ETH",
-    korean_name: "이더리움",
-    english_name: "Ethereum",
-  },
-  {
-    market: "BTC-LTC",
-    korean_name: "라이트코인",
-    english_name: "Litecoin",
-  },
-];
+
+interface CoinInterface {
+  market: string;
+  korean_name: string;
+  english_name: string;
+}
 
 function Coins() {
+  const [coins, setCoins] = useState<CoinInterface[]>([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    (async () => {
+      await fetch("https://api.upbit.com/v1/market/all?isDetails=false")
+        .then((response) => response.json())
+        .then((json) => setCoins(json.slice(0, 200)));
+      setLoading(false);
+    })();
+  }, []);
+
   return (
     <Container>
       <Header>
         <Title>코인</Title>
       </Header>
-      <CoinList>
-        {coins.map((coin) => (
-          <Coin key={coin.market}>
-            <Link to={`/${coin.market}`}>
-              {coin.korean_name}({coin.market}) &rarr;
-            </Link>
-          </Coin>
-        ))}
-      </CoinList>
+      {loading ? (
+        <Loader>Loading...</Loader>
+      ) : (
+        <CoinList>
+          {coins.map((coin) => (
+            <Coin key={coin.market}>
+              <Link to={`/${coin.market}`}>
+                {coin.korean_name}({coin.market}) &rarr;
+              </Link>
+            </Coin>
+          ))}
+        </CoinList>
+      )}
     </Container>
   );
 }
