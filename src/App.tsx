@@ -46,6 +46,7 @@ body {
 
 a {
   text-decoration: none;
+  color: inherit;
 }
 
 menu, ol, ul {
