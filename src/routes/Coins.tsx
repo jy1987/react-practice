@@ -35,7 +35,8 @@ const Coin = styled.li`
   border-radius: 15px;
   a {
     transition: color 0.25s ease-in;
-    display: block;
+    display: flex;
+    align-items: center;
   }
   &:hover {
     a {
@@ -43,10 +44,18 @@ const Coin = styled.li`
     }
   }
 `;
+
+const Img = styled.img`
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+`;
+
 //upbit secret key :zE1TaNTvxCXbLn8SYPWxOUglLpilLTT5ecjN4zke
 // upbit access key : zeF6AEJOnPszEuiFY7JrA6m1gbpAuMYfcRRxxFyl
 
 interface CoinInterface {
+  name: string;
   market: string;
   korean_name: string;
   english_name: string;
@@ -57,9 +66,11 @@ function Coins() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     (async () => {
-      await fetch("https://api.upbit.com/v1/market/all?isDetails=false")
-        .then((response) => response.json())
-        .then((json) => setCoins(json.slice(0, 200)));
+      const response = await fetch(
+        "https://api.upbit.com/v1/market/all?isDetails=false"
+      );
+      const json = await response.json();
+      setCoins(json.slice(0, 150));
       setLoading(false);
     })();
   }, []);
@@ -75,7 +86,12 @@ function Coins() {
         <CoinList>
           {coins.map((coin) => (
             <Coin key={coin.market}>
-              <Link to={`/${coin.market}`}>
+              <Link to={`/${coin.market}`} state={{ name: coin.korean_name }}>
+                <Img
+                  src={`https://cryptoicon-api.vercel.app/api/icon/${coin.market
+                    .slice(4)
+                    .toLowerCase()}`}
+                />
                 {coin.korean_name}({coin.market}) &rarr;
               </Link>
             </Coin>
