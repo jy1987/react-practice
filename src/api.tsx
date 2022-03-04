@@ -3,3 +3,9 @@ export function fetchCoins() {
     (response) => response.json()
   );
 }
+
+export function fetchCoinInfo(coinId: string) {
+  return fetch(
+    `https://api.upbit.com/v1/candles/days?market=${coinId}&count=14`
+  ).then((response) => response.json());
+}

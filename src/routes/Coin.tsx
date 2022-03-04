@@ -4,6 +4,8 @@ import { Routes, Route, Link, useMatch } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Price from "./Price";
 import Chart from "./Chart";
+import { useQuery } from "react-query";
+import { fetchCoinInfo } from "../api";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -59,7 +61,7 @@ const Tabs = styled.div`
 
 const Tab = styled.span<{ isActive: boolean }>`
   text-align: center;
-  background-color: #181717;
+  background-color: #222f3e;
   padding: 5px 0px;
   border-radius: 10px;
   color: ${(props) =>
@@ -92,11 +94,16 @@ interface InfoInterface {
 
 function Coin() {
   const { coinId } = useParams();
-  const [info, setInfo] = useState<InfoInterface[]>([]);
-  const [loading, setLoading] = useState(true);
   const { state, pathname } = useLocation() as RouterState;
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch(`/${coinId}/chart`);
+  const { isLoading: infoLoading, data: infoData } = useQuery<InfoInterface[]>(
+    `${coinId}`,
+    () => fetchCoinInfo(`${coinId}`)
+  );
+  //console.log(infoLoading, infoData);
+  /*const [info, setInfo] = useState<InfoInterface[]>([]);
+  const [loading, setLoading] = useState(true);
   console.log(chartMatch);
   useEffect(() => {
     (async () => {
@@ -109,20 +116,24 @@ function Coin() {
       setInfo(getData);
       setLoading(false);
     })();
-  }, [coinId]);
+  }, [coinId]); */
 
   return (
     <Container>
       <Header>
         <Title>
-          {state ? state.name : loading ? "Loading..." : info[0].market}
+          {state
+            ? state.name
+            : infoLoading
+            ? "Loading..."
+            : infoData?.[0].market}
         </Title>
       </Header>
-      {loading ? (
+      {infoLoading ? (
         <Loader>Loading...</Loader>
       ) : (
         <CoinList>
-          {info.map((data, id) => (
+          {infoData?.map((data, id) => (
             <Info key={id}>
               <Overview>
                 <OverviewItem>{`[No.${id}]`}</OverviewItem>
