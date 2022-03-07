@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useLocation, useParams, useRoutes } from "react-router";
+import { Outlet, useLocation, useParams, useRoutes } from "react-router";
 import { Routes, Route, Link, useMatch } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Price from "./Price";
@@ -98,7 +98,7 @@ function Coin() {
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch(`/${coinId}/chart`);
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoInterface[]>(
-    `${coinId}`,
+    ["info", `${coinId}`],
     () => fetchCoinInfo(`${coinId}`)
   );
   //console.log(infoLoading, infoData);
@@ -165,7 +165,10 @@ function Coin() {
 
               <Routes>
                 <Route path="price" element={<Price />}></Route>
-                <Route path="chart" element={<Chart />}></Route>
+                <Route
+                  path="chart"
+                  element={<Chart coinId={coinId as string} />}
+                ></Route>
               </Routes>
             </Info>
           ))}
