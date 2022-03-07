@@ -6,6 +6,7 @@ import Price from "./Price";
 import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fetchCoinInfo } from "../api";
+import { Helmet } from "react-helmet-async";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -120,6 +121,15 @@ function Coin() {
 
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state
+            ? state.name
+            : infoLoading
+            ? "Loading..."
+            : infoData?.[0].market}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state

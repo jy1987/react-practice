@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled, { createGlobalStyle, keyframes } from "styled-components";
 import Router from "./Router";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { HelmetProvider } from "react-helmet-async";
 
 const GlobalStyle = createGlobalStyle`
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@200;300&display=swap');
@@ -71,7 +72,10 @@ function App() {
   return (
     <>
       <GlobalStyle />
-      <Router></Router>
+      <HelmetProvider>
+        <Router></Router>
+      </HelmetProvider>
+
       <ReactQueryDevtools initialIsOpen={true} />
     </>
   );

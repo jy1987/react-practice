@@ -23,8 +23,10 @@ interface IHistory {
 }
 
 function Chart({ coinId }: CharProps) {
-  const { isLoading, data } = useQuery<IHistory[]>(["history", coinId], () =>
-    fetchCoinHistory(coinId)
+  const { isLoading, data } = useQuery<IHistory[]>(
+    ["history", coinId],
+    () => fetchCoinHistory(coinId),
+    { refetchInterval: 1000 }
   );
 
   return (
@@ -50,11 +52,21 @@ function Chart({ coinId }: CharProps) {
             theme: {
               mode: "dark",
             },
+            chart: {
+              height: 500,
+              width: 500,
+              type: "candlestick",
+              background: "#4b6584",
+            },
             xaxis: {
               type: "datetime",
             },
+
             plotOptions: {
-              candlestick: { colors: { upward: "green", downward: "tomato" } },
+              candlestick: {
+                wick: { useFillColor: true },
+                colors: { downward: "#ee5253", upward: "#1dd1a1" },
+              },
             },
           }}
         />
