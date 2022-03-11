@@ -32,7 +32,7 @@ const CoinList = styled.ul``;
 
 const Coin = styled.li`
   background-color: white;
-  color: ${(props) => props.theme.bgColor};
+  color: ${(props) => props.theme.textColor};
   margin-bottom: 10px;
   padding: 20px;
   border-radius: 15px;
@@ -64,7 +64,11 @@ interface ICoin {
   english_name: string;
 }
 
-function Coins() {
+interface ICoinsPros {
+  toggleDark: () => void;
+}
+
+function Coins({ toggleDark }: ICoinsPros) {
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
   //console.log(isLoading, data);
   return (
@@ -74,6 +78,7 @@ function Coins() {
       </Helmet>
       <Header>
         <Title>코인</Title>
+        <button onClick={toggleDark}>Toggle Mode</button>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>

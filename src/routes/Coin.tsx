@@ -7,6 +7,8 @@ import Chart from "./Chart";
 import { useQuery } from "react-query";
 import { fetchCoinInfo } from "../api";
 import { Helmet } from "react-helmet-async";
+import { useRecoilValue, useRecoilState, RecoilRoot } from "recoil";
+import { isDarkAtom } from "../atom";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -16,8 +18,8 @@ const Container = styled.div`
 
 const Header = styled.header`
   height: 10vh;
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(1, 3.5em 1fr 3.5em);
   align-items: center;
 `;
 
@@ -43,7 +45,9 @@ const Overview = styled.div`
 
 const OverviewItem = styled.div``;
 
-const Title = styled.h1`
+const Title = styled.div`
+  display: flex;
+  justify-content: center;
   color: ${(props) => props.theme.accentColor};
   font-size: 48px;
 `;
@@ -66,11 +70,13 @@ const Tab = styled.span<{ isActive: boolean }>`
   padding: 5px 0px;
   border-radius: 10px;
   color: ${(props) =>
-    props.isActive ? props.theme.accentColor : props.theme.textColor};
+    props.isActive ? props.theme.accentColor : props.theme.bgColor};
   a {
     display: block;
   }
 `;
+
+const Back = styled.div``;
 
 interface RouterState {
   state: { name: string };
@@ -93,11 +99,16 @@ interface InfoInterface {
   change_rate: number;
 }
 
-function Coin() {
+interface ICoinProps {
+  isDark: boolean;
+}
+
+function Coin({ isDark }: ICoinProps) {
   const { coinId } = useParams();
   const { state, pathname } = useLocation() as RouterState;
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch(`/${coinId}/chart`);
+  console.log(isDark);
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoInterface[]>(
     ["info", `${coinId}`],
     () => fetchCoinInfo(`${coinId}`)
@@ -131,6 +142,10 @@ function Coin() {
         </title>
       </Helmet>
       <Header>
+        <Back>
+          <Link to={"/"}>&larr;Home</Link>
+        </Back>
+
         <Title>
           {state
             ? state.name
