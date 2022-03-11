@@ -8,7 +8,6 @@ import { useQuery } from "react-query";
 import { fetchCoinInfo } from "../api";
 import { Helmet } from "react-helmet-async";
 import { useRecoilValue, useRecoilState, RecoilRoot } from "recoil";
-import { isDarkAtom } from "../atom";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -99,16 +98,14 @@ interface InfoInterface {
   change_rate: number;
 }
 
-interface ICoinProps {
-  isDark: boolean;
-}
+interface ICoinProps {}
 
-function Coin({ isDark }: ICoinProps) {
+function Coin({}: ICoinProps) {
   const { coinId } = useParams();
   const { state, pathname } = useLocation() as RouterState;
   const priceMatch = useMatch("/:coinId/price");
   const chartMatch = useMatch(`/${coinId}/chart`);
-  console.log(isDark);
+
   const { isLoading: infoLoading, data: infoData } = useQuery<InfoInterface[]>(
     ["info", `${coinId}`],
     () => fetchCoinInfo(`${coinId}`)
