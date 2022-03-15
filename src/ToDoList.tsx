@@ -31,6 +31,7 @@ interface IForm {
   firstName: string;
   lastName?: string;
   password: string;
+  password1: string;
 }
 
 function ToDoList() {
@@ -39,10 +40,19 @@ function ToDoList() {
     watch,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<IForm>({ defaultValues: { email: "@naver.com" } });
   //console.log(watch());
-  const onValid = (data: any) => console.log(data);
-  //console.log(errors);
+  const onValid = (data: IForm) => {
+    if (data.password !== data.password1) {
+      setError(
+        "password1",
+        { message: "password are not the same" },
+        { shouldFocus: true }
+      );
+    }
+  };
+  console.log(errors);
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <form
@@ -62,6 +72,8 @@ function ToDoList() {
               value: /^[A-Za-z0-9._%+-]+@naver.com$/,
               message: "invalid email",
             },
+            validate: (value) =>
+              value.includes("@") ? true : "@ must be included",
           })}
         ></input>
         <span
@@ -73,20 +85,39 @@ function ToDoList() {
           {errors?.email?.message}
         </span>
         <input
-          {...register("firstName", { required: "yaho", minLength: 10 })}
+          {...register("firstName", {
+            required: "yaho",
+            validate: {
+              kim: (value) =>
+                value.includes("kim") ? true : "must include kim",
+              lee: (value) =>
+                value.includes("lee") ? "must not include lee" : true,
+            },
+          })}
           placeholder="firstName"
         ></input>
+        <span>{errors?.firstName?.message}</span>
         <input
-          {...register("lastName", { required: true, minLength: 10 })}
+          {...register("lastName", { required: "write here" })}
           placeholder="lastName"
         ></input>
+        <span>{errors?.lastName?.message}</span>
         <input
           {...register("password", {
             required: true,
-            minLength: { value: 10, message: "too short" },
+            minLength: { value: 4, message: "too short" },
           })}
           placeholder="password"
         ></input>
+        <input
+          {...register("password1", {
+            required: true,
+            minLength: { value: 4, message: "too short" },
+          })}
+          placeholder="password1"
+        ></input>
+        <span>{errors?.password1?.message}</span>
+
         <button>Add</button>
       </form>
     </div>
